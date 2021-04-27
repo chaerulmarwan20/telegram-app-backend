@@ -10,14 +10,13 @@ const validation = require("../helpers/validation");
 const secretKey = process.env.SECRET_KEY;
 
 exports.findAll = (req, res) => {
-  const idUser = req.auth.id;
   const { page, perPage } = req.query;
   const keyword = req.query.keyword ? req.query.keyword : "";
   const sortBy = req.query.sortBy ? req.query.sortBy : "id";
   const order = req.query.order ? req.query.order : "ASC";
 
   usersModel
-    .getAllUsers(page, perPage, keyword, sortBy, order, idUser)
+    .getAllUsers(page, perPage, keyword, sortBy, order)
     .then(([totalData, totalPage, result, page, perPage]) => {
       if (result < 1) {
         helper.printError(res, 400, "Users not found");
@@ -28,7 +27,6 @@ exports.findAll = (req, res) => {
           break;
         } else {
           delete result[i].password;
-          delete result[i].pin;
           delete result[i].createdAt;
           delete result[i].updatedAt;
         }
@@ -60,7 +58,6 @@ exports.findOne = (req, res) => {
         return;
       }
       delete result[0].password;
-      delete result[0].pin;
       delete result[0].createdAt;
       delete result[0].updatedAt;
       helper.printSuccess(res, 200, "Find one users successfully", result);
@@ -85,27 +82,14 @@ exports.create = async (req, res) => {
     return;
   }
 
-  const {
-    username,
-    email,
-    password,
-    firstName,
-    lastName,
-    phoneNumber,
-  } = req.body;
+  const { name, email, password } = req.body;
 
   const data = {
-    username,
+    name,
     email,
     password: await hash.hashPassword(password),
-    firstName,
-    lastName,
-    fullName: `${firstName} ${lastName}`,
-    pin: 0,
-    phoneNumber,
+    phoneNumber: "none",
     image,
-    credit: 0,
-    role: 2,
     active: false,
   };
 
@@ -117,18 +101,14 @@ exports.create = async (req, res) => {
         return;
       }
       delete result[0].password;
-      delete result[0].pin;
       delete result[0].createdAt;
       delete result[0].updatedAt;
       const payload = {
         id: result[0].id,
-        username: result[0].username,
+        name: result[0].name,
         email: result[0].email,
-        firstName: result[0].firstName,
-        lastName: result[0].lastName,
-        fullName: result[0].fullName,
         phoneNumber: result[0].phoneNumber,
-        role: result[0].role,
+        image: result[0].image,
       };
       jwt.sign(payload, secretKey, { expiresIn: "24h" }, async (err, token) => {
         const data = {
@@ -187,7 +167,7 @@ exports.verify = async (req, res) => {
               helper.printSuccess(
                 res,
                 200,
-                `${email} has been activated, please create your pin!`,
+                `${email} has been activated, please login!`,
                 decoded
               );
             }
@@ -221,20 +201,15 @@ exports.login = (req, res) => {
     .login(data)
     .then((result) => {
       delete result.password;
-      delete result.pin;
-      delete result.role;
       delete result.active;
       delete result.createdAt;
       delete result.updatedAt;
       const payload = {
         id: result.id,
-        username: result.username,
+        name: result.name,
         email: result.email,
-        firstName: result.firstName,
-        lastName: result.lastName,
-        fullName: result.fullName,
         phoneNumber: result.phoneNumber,
-        role: result.role,
+        image: result.image,
       };
       jwt.sign(payload, secretKey, { expiresIn: "24h" }, async (err, token) => {
         result.token = token;
@@ -269,18 +244,14 @@ exports.forgotPassword = (req, res) => {
         return;
       }
       delete result[0].password;
-      delete result[0].pin;
       delete result[0].createdAt;
       delete result[0].updatedAt;
       const payload = {
         id: result[0].id,
-        username: result[0].username,
+        name: result[0].name,
         email: result[0].email,
-        firstName: result[0].firstName,
-        lastName: result[0].lastName,
-        fullName: result[0].fullName,
         phoneNumber: result[0].phoneNumber,
-        role: result[0].role,
+        image: result[0].image,
       };
       jwt.sign(payload, secretKey, { expiresIn: "24h" }, async (err, token) => {
         const data = {
@@ -303,7 +274,7 @@ exports.forgotPassword = (req, res) => {
 };
 
 exports.resetPassword = async (req, res) => {
-  const validate = validation.validationPassword(req.body);
+  const validate = validation.validationForgotPassword(req.body);
 
   if (validate.error) {
     helper.printError(res, 400, validate.error.details[0].message);
@@ -371,13 +342,12 @@ exports.update = async (req, res) => {
 
   const id = req.params.id;
 
-  const { username, firstName, lastName, phoneNumber } = req.body;
+  const { name, email, password, phoneNumber } = req.body;
 
   const data = {
-    username,
-    firstName,
-    lastName,
-    fullName: `${firstName} ${lastName}`,
+    name,
+    email,
+    password: await hash.hashPassword(password),
     phoneNumber,
   };
 
@@ -399,7 +369,6 @@ exports.update = async (req, res) => {
     })
     .then((result) => {
       delete result[0].password;
-      delete result[0].pin;
       delete result[0].createdAt;
       delete result[0].updatedAt;
       helper.printSuccess(res, 200, "Users has been updated", result);

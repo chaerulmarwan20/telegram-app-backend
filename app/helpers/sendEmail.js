@@ -24,7 +24,7 @@ const send = (destination, token, type) => {
           from: email,
           to: destination,
           subject: "Account Verification",
-          html: `Click this link to verify your account : <a href="${link}/auth/sign-up/${destination}/${token}">Activate</a>`,
+          html: `Click this link to verify your account : <a href="${link}/register/?email=${destination}&token=${token}">Activate</a>`,
         });
         resolve(info);
       } else if (type === "forgot") {
@@ -32,7 +32,7 @@ const send = (destination, token, type) => {
           from: email,
           to: destination,
           subject: "Reset Password",
-          html: `Click this link to reset your password : <a href="${link}/auth/forgot/${destination}/${token}">Reset Password</a>`,
+          html: `Click this link to reset your password : <a href="${link}/forgot-password/?email=${destination}&token=${token}">Reset Password</a>`,
         });
         resolve(info);
       }
