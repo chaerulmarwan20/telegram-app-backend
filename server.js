@@ -23,17 +23,15 @@ const io = socket(httpServer, {
 });
 
 io.on("connection", (socket) => {
-  console.log("Client connected by id " + socket.id);
+  console.log(`Client connected by id ${socket.id}`);
 
-  let count = 0;
   socket.on("sendMessage", (data) => {
-    socket.broadcast.emit("reqMessage", count + " " + data);
-    count++;
+    io.emit("reqMessage", `${data} from id ${socket.id}`);
     console.log(data);
   });
 
   socket.on("disconnect", (reason) => {
-    console.log("Client disconnect " + reason);
+    console.log(`Client disconnect from ${reason}`);
   });
 });
 
