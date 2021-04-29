@@ -87,9 +87,11 @@ exports.create = async (req, res) => {
   const data = {
     name,
     email,
+    username: "none",
     password: await hash.hashPassword(password),
     phoneNumber: "none",
     image,
+    bio: "none",
     active: false,
   };
 
@@ -342,13 +344,13 @@ exports.update = async (req, res) => {
 
   const id = req.params.id;
 
-  const { name, email, password, phoneNumber } = req.body;
+  const { name, username, phoneNumber, bio } = req.body;
 
   const data = {
     name,
-    email,
-    password: await hash.hashPassword(password),
+    username,
     phoneNumber,
+    bio,
   };
 
   usersModel
