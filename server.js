@@ -9,6 +9,9 @@ const express = require("express");
 const morgan = require("morgan");
 const socket = require("socket.io");
 const cors = require("cors");
+const moment = require("moment");
+
+moment.locale("id");
 
 const http = require("http");
 const path = require("path");
@@ -26,12 +29,42 @@ const io = socket(httpServer, {
   },
 });
 
+const usersModel = require("./app/models/usersModel");
+
 io.on("connection", (socket) => {
   console.log(`Client connected by id ${socket.id}`);
 
-  socket.on("sendMessage", (data) => {
-    io.emit("reqMessage", `${data} from id ${socket.id}`);
-    console.log(data);
+  socket.on("initialLogin", (id) => {
+    console.log(`user:${id}`);
+    socket.join(`user:${id}`);
+  });
+
+  socket.on("sendMessage", async (data, callback) => {
+    const date = new Date();
+    const dayNow = moment(date).format("dddd");
+    const timeNow = moment(date).format("LT");
+    const message = { ...data, time: timeNow, day: dayNow };
+    const sendInput = {
+      message: message.message,
+      time: `${message.day}. ${message.time}`,
+      senderId: message.senderId,
+      targetId: message.receiverId,
+      type: "send",
+    };
+    const targetInput = {
+      message: message.message,
+      time: `${message.day}. ${message.time}`,
+      senderId: message.receiverId,
+      targetId: message.senderId,
+      type: "receive",
+    };
+    await usersModel.createMessage(sendInput);
+    await usersModel.createMessage(targetInput);
+    const getMessagesSender = await usersModel.findMessages(data.senderId);
+    const getMessagesTarget = await usersModel.findMessages(data.receiverId);
+    const result = [...getMessagesSender, ...getMessagesTarget];
+    io.to(`user:${data.receiverId}`).emit("recMessage", result);
+    callback(result);
   });
 
   socket.on("disconnect", (reason) => {

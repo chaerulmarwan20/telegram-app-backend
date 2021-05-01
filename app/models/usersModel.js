@@ -1,11 +1,18 @@
 const bcrypt = require("bcrypt");
 const connection = require("../configs/dbConfig");
 
-exports.getAllUsers = (queryPage, queryPerPage, keyword, sortBy, order) => {
+exports.getAllUsers = (
+  queryPage,
+  queryPerPage,
+  keyword,
+  sortBy,
+  order,
+  idUser
+) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      "SELECT COUNT(*) AS totalData FROM users WHERE name LIKE ? OR email LIKE ?",
-      [`%${keyword}%`, `%${keyword}%`],
+      "SELECT COUNT(*) AS totalData FROM users WHERE name LIKE ? AND id <> ?",
+      [`%${keyword}%`, idUser],
       (err, result) => {
         let totalData, page, perPage, totalPage;
         if (err) {
@@ -18,8 +25,8 @@ exports.getAllUsers = (queryPage, queryPerPage, keyword, sortBy, order) => {
         }
         const firstData = perPage * page - perPage;
         connection.query(
-          `SELECT * FROM users WHERE name LIKE ? OR email LIKE ? ORDER BY ${sortBy} ${order} LIMIT ?, ?`,
-          [`%${keyword}%`, `%${keyword}%`, firstData, perPage],
+          `SELECT * FROM users WHERE name LIKE ? AND id <> ? ORDER BY ${sortBy} ${order} LIMIT ?, ?`,
+          [`%${keyword}%`, idUser, firstData, perPage],
           (err, result) => {
             if (err) {
               reject(new Error("Internal server error"));
@@ -86,6 +93,50 @@ exports.createUsersToken = (data) => {
         reject(new Error("Internal server error"));
       }
     });
+  });
+};
+
+exports.createMessage = (data) => {
+  return new Promise((resolve, reject) => {
+    connection.query("INSERT INTO messages SET ?", data, (err, result) => {
+      if (!err) {
+        resolve(result);
+      } else {
+        reject(new Error("Internal server error"));
+      }
+    });
+  });
+};
+
+exports.deleteMessage = (idSender, idReceiver) => {
+  return new Promise((resolve, reject) => {
+    connection.query(
+      "DELETE FROM messages WHERE senderId = ? AND receiverId = ?",
+      [idSender, idReceiver],
+      (err, result) => {
+        if (!err) {
+          resolve(result);
+        } else {
+          reject(new Error("Internal server error"));
+        }
+      }
+    );
+  });
+};
+
+exports.findMessages = (idSender) => {
+  return new Promise((resolve, reject) => {
+    connection.query(
+      "SELECT * FROM messages WHERE senderId = ?",
+      idSender,
+      (err, result) => {
+        if (!err) {
+          resolve(result);
+        } else {
+          reject(new Error("Internal server error"));
+        }
+      }
+    );
   });
 };
 

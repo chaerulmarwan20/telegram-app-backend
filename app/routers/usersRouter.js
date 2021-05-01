@@ -7,6 +7,7 @@ const auth = require("../middlewares/auth");
 router
   .get("/", auth.verification(), usersController.findAll)
   .get("/find-one", auth.verification(), usersController.findOne)
+  .get("/find-user/:id", auth.verification(), usersController.findUser)
   .post("/", multer.uploadImage.single("image"), usersController.create)
   .get("/auth/verify", usersController.verify)
   .post("/auth/login", usersController.login)
@@ -18,6 +19,16 @@ router
     multer.uploadImage.single("image"),
     usersController.update
   )
-  .delete("/:id", auth.verification(), usersController.delete);
+  .delete("/:id", auth.verification(), usersController.delete)
+  .get(
+    "/messages/:idSender/:idReceiver",
+    auth.verification(),
+    usersController.findMessages
+  )
+  .delete(
+    "/messages/:idSender/:idReceiver",
+    auth.verification(),
+    usersController.deleteMessages
+  );
 
 module.exports = router;
