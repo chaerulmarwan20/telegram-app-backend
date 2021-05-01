@@ -427,23 +427,19 @@ exports.delete = (req, res) => {
     });
 };
 
-exports.deleteMessages = (req, res) => {
+exports.deleteMessages = async (req, res) => {
   const { idSender, idReceiver } = req.params;
 
-  usersModel
-    .findMessages(idSender, idReceiver, "delete")
-    .then((result) => {
-      return usersModel.deleteMessages(id);
-    })
-    .then((result) => {
-      helper.printSuccess(res, 200, "Users has been deleted", {});
-    })
-    .catch((err) => {
-      if (err.message === "Internal server error") {
-        helper.printError(res, 500, err.message);
-      }
-      helper.printError(res, 400, err.message);
-    });
+  try {
+    await usersModel.deleteMessagesSender(idSender, idReceiver);
+    await usersModel.deleteMessagesReceiver(idReceiver, idSender);
+    helper.printSuccess(res, 200, "Chat history has been deleted", {});
+  } catch (err) {
+    if (err.message === "Internal server error") {
+      helper.printError(res, 500, err.message);
+    }
+    helper.printError(res, 400, err.message);
+  }
 };
 
 exports.findMessages = async (req, res) => {

@@ -108,11 +108,27 @@ exports.createMessage = (data) => {
   });
 };
 
-exports.deleteMessage = (idSender, idReceiver) => {
+exports.deleteMessagesSender = (idSender, idReceiver) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      "DELETE FROM messages WHERE senderId = ? AND receiverId = ?",
+      "DELETE FROM messages WHERE senderId = ? AND targetId = ?",
       [idSender, idReceiver],
+      (err, result) => {
+        if (!err) {
+          resolve(result);
+        } else {
+          reject(new Error("Internal server error"));
+        }
+      }
+    );
+  });
+};
+
+exports.deleteMessagesReceiver = (idReceiver, idSender) => {
+  return new Promise((resolve, reject) => {
+    connection.query(
+      "DELETE FROM messages WHERE senderId = ? AND targetId = ?",
+      [idReceiver, idSender],
       (err, result) => {
         if (!err) {
           resolve(result);
