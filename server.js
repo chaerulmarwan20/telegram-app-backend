@@ -34,8 +34,14 @@ const usersModel = require("./app/models/usersModel");
 io.on("connection", (socket) => {
   console.log(`Client connected by id ${socket.id}`);
 
-  socket.on("initialLogin", (id) => {
+  socket.on("initialLogin", async (id) => {
     console.log(`user:${id}`);
+    const dataSocket = {
+      idUser: id,
+      idSocket: socket.id,
+    };
+    await usersModel.createUserSocket(dataSocket);
+    io.emit("login", id);
     socket.join(`user:${id}`);
   });
 
@@ -65,6 +71,10 @@ io.on("connection", (socket) => {
     const result = [...getMessagesSender, ...getMessagesTarget];
     io.to(`user:${data.receiverId}`).emit("recMessage", result);
     callback(result);
+  });
+
+  socket.on("initialLogout", (id) => {
+    io.emit("logout", id);
   });
 
   socket.on("disconnect", (reason) => {

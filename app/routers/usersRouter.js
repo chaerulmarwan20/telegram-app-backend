@@ -29,6 +29,7 @@ router
     "/messages/:idSender/:idReceiver",
     auth.verification(),
     usersController.deleteMessages
-  );
+  )
+  .delete("/socket/:id", auth.verification(), usersController.deleteSocket);
 
 module.exports = router;

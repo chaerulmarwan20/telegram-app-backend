@@ -13,7 +13,7 @@ exports.findAll = (req, res) => {
   const idUser = req.auth.id;
   const { page, perPage } = req.query;
   const keyword = req.query.keyword ? req.query.keyword : "";
-  const sortBy = req.query.sortBy ? req.query.sortBy : "id";
+  const sortBy = req.query.sortBy ? req.query.sortBy : "users.id";
   const order = req.query.order ? req.query.order : "ASC";
 
   usersModel
@@ -22,15 +22,6 @@ exports.findAll = (req, res) => {
       if (result < 1) {
         helper.printError(res, 400, "Users not found");
         return;
-      }
-      for (let i = 0; i < perPage; i++) {
-        if (result[i] === undefined) {
-          break;
-        } else {
-          delete result[i].password;
-          delete result[i].createdAt;
-          delete result[i].updatedAt;
-        }
       }
       helper.printPaginate(
         res,
@@ -456,6 +447,25 @@ exports.findMessages = async (req, res) => {
     }
     helper.printError(res, 400, err.message);
   }
+};
+
+exports.deleteSocket = (req, res) => {
+  const id = req.params.id;
+
+  usersModel
+    .findSocket(id, "delete")
+    .then((result) => {
+      return usersModel.deleteUserSocket(id);
+    })
+    .then((result) => {
+      helper.printSuccess(res, 200, "User socket has been deleted", {});
+    })
+    .catch((err) => {
+      if (err.message === "Internal server error") {
+        helper.printError(res, 500, err.message);
+      }
+      helper.printError(res, 400, err.message);
+    });
 };
 
 const removeImage = (filePath) => {

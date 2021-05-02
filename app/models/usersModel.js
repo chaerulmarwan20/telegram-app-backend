@@ -11,12 +11,12 @@ exports.getAllUsers = (
 ) => {
   return new Promise((resolve, reject) => {
     connection.query(
-      "SELECT COUNT(*) AS totalData FROM users WHERE name LIKE ? AND id <> ?",
+      "SELECT COUNT(*) AS totalData FROM users LEFT JOIN user_socket ON users.id = user_socket.idUser WHERE users.name LIKE ? AND users.id <> ?",
       [`%${keyword}%`, idUser],
       (err, result) => {
         let totalData, page, perPage, totalPage;
         if (err) {
-          reject(new Error("Internal server error"));
+          reject(new Error("Internal Server Error"));
         } else {
           totalData = result[0].totalData;
           page = queryPage ? parseInt(queryPage) : 1;
@@ -25,11 +25,11 @@ exports.getAllUsers = (
         }
         const firstData = perPage * page - perPage;
         connection.query(
-          `SELECT * FROM users WHERE name LIKE ? AND id <> ? ORDER BY ${sortBy} ${order} LIMIT ?, ?`,
+          `SELECT users.id AS id, users.name, users.email, users.username, users.phoneNumber, users.image, users.bio, user_socket.idSocket AS userSocket, user_socket.idUser AS userId FROM users LEFT JOIN user_socket ON users.id = user_socket.idUser WHERE users.name LIKE ? AND users.id <> ? ORDER BY ${sortBy} ${order} LIMIT ?, ?`,
           [`%${keyword}%`, idUser, firstData, perPage],
           (err, result) => {
             if (err) {
-              reject(new Error("Internal server error"));
+              reject(new Error(err));
             } else {
               resolve([totalData, totalPage, result, page, perPage]);
             }
@@ -42,13 +42,17 @@ exports.getAllUsers = (
 
 exports.getUsersById = (id) => {
   return new Promise((resolve, reject) => {
-    connection.query("SELECT * FROM users WHERE id = ?", id, (err, result) => {
-      if (!err) {
-        resolve(result);
-      } else {
-        reject(new Error("Internal server error"));
+    connection.query(
+      "SELECT users.id AS id, users.name, users.email, users.username, users.phoneNumber, users.image, users.bio, user_socket.idSocket AS userSocket, user_socket.idUser AS userId FROM users LEFT JOIN user_socket ON users.id = user_socket.idUser WHERE users.id = ?",
+      id,
+      (err, result) => {
+        if (!err) {
+          resolve(result);
+        } else {
+          reject(new Error("Internal server error"));
+        }
       }
-    });
+    );
   });
 };
 
@@ -372,6 +376,77 @@ exports.setPassword = (password, email) => {
     connection.query(
       "UPDATE users SET password = ? WHERE email = ?",
       [password, email],
+      (err, result) => {
+        if (!err) {
+          resolve(result);
+        } else {
+          reject(new Error("Internal server error"));
+        }
+      }
+    );
+  });
+};
+
+exports.findSocket = (id, message) => {
+  return new Promise((resolve, reject) => {
+    connection.query(
+      "SELECT * FROM user_socket WHERE idUser = ?",
+      id,
+      (err, result) => {
+        if (!err) {
+          if (result.length == 1) {
+            resolve(result);
+          } else {
+            reject(new Error(`Cannot ${message} users with id = ${id}`));
+          }
+        } else {
+          reject(new Error("Internal server error"));
+        }
+      }
+    );
+  });
+};
+
+exports.createUserSocket = (data) => {
+  return new Promise((resolve, reject) => {
+    connection.query(
+      "SELECT * FROM user_socket WHERE idUser = ?",
+      data.idUser,
+      (err, result) => {
+        if (result.length > 0) {
+          connection.query(
+            "DELETE FROM user_socket WHERE idUser = ?",
+            data.idUser,
+            (err, result) => {
+              if (!err) {
+                resolve(result);
+              } else {
+                reject(new Error("Internal server error"));
+              }
+            }
+          );
+        }
+        connection.query(
+          "INSERT INTO user_socket SET ?",
+          data,
+          (err, result) => {
+            if (!err) {
+              resolve(result);
+            } else {
+              reject(new Error("Internal server error"));
+            }
+          }
+        );
+      }
+    );
+  });
+};
+
+exports.deleteUserSocket = (id) => {
+  return new Promise((resolve, reject) => {
+    connection.query(
+      "DELETE FROM user_socket WHERE idUser = ?",
+      id,
       (err, result) => {
         if (!err) {
           resolve(result);
