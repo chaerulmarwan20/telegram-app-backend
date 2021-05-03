@@ -468,6 +468,35 @@ exports.deleteSocket = (req, res) => {
     });
 };
 
+exports.deleteOneMessages = async (req, res) => {
+  const { idSender, idTarget, idMessage } = req.params;
+
+  const messageTarget = Number(idMessage) + 1;
+
+  try {
+    const deleteMessagesSender = await usersModel.deleteOneMessagesSender(
+      idSender,
+      idMessage
+    );
+    const deleteMessagesTarget = await usersModel.deleteOneMessagesTarget(
+      idTarget,
+      messageTarget
+    );
+    if (deleteMessagesSender.affectedRows === 0) {
+      helper.printError(res, 500, `Delete message failed`);
+    }
+    if (deleteMessagesTarget.affectedRows === 0) {
+      helper.printError(res, 500, `Delete message failed`);
+    }
+    helper.printSuccess(res, 200, "Message has been deleted", {});
+  } catch (err) {
+    if (err.message === "Internal server error") {
+      helper.printError(res, 500, err.message);
+    }
+    helper.printError(res, 400, err.message);
+  }
+};
+
 const removeImage = (filePath) => {
   filePath = path.join(__dirname, "../..", filePath);
   fs.unlink(filePath, (err) => new Error(err));

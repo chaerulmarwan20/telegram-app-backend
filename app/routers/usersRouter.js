@@ -26,9 +26,9 @@ router
     usersController.findMessages
   )
   .delete(
-    "/messages/:idSender/:idReceiver",
+    "/messages/:idSender/:idTarget/:idMessage",
     auth.verification(),
-    usersController.deleteMessages
+    usersController.deleteOneMessages
   )
   .delete("/socket/:id", auth.verification(), usersController.deleteSocket);
 

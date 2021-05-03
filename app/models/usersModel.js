@@ -144,6 +144,38 @@ exports.deleteMessagesReceiver = (idReceiver, idSender) => {
   });
 };
 
+exports.deleteOneMessagesSender = (idSender, idMessage) => {
+  return new Promise((resolve, reject) => {
+    connection.query(
+      `UPDATE messages SET message = "Pesan ini telah dihapus" WHERE id = ? AND senderId = ?`,
+      [idMessage, idSender],
+      (err, result) => {
+        if (!err) {
+          resolve(result);
+        } else {
+          reject(new Error("Internal server error"));
+        }
+      }
+    );
+  });
+};
+
+exports.deleteOneMessagesTarget = (idTarget, idMessage) => {
+  return new Promise((resolve, reject) => {
+    connection.query(
+      `UPDATE messages SET message = "Pesan ini telah dihapus" WHERE id = ? AND senderId = ?`,
+      [idMessage, idTarget],
+      (err, result) => {
+        if (!err) {
+          resolve(result);
+        } else {
+          reject(new Error("Internal server error"));
+        }
+      }
+    );
+  });
+};
+
 exports.findMessages = (idSender) => {
   return new Promise((resolve, reject) => {
     connection.query(

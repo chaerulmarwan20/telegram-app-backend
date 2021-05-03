@@ -33,9 +33,10 @@ const usersModel = require("./app/models/usersModel");
 
 io.on("connection", (socket) => {
   console.log(`Client connected by id ${socket.id}`);
-
+  let idUser = null;
   socket.on("initialLogin", async (id) => {
     console.log(`user:${id}`);
+    idUser = id;
     const dataSocket = {
       idUser: id,
       idSocket: socket.id,
@@ -77,7 +78,9 @@ io.on("connection", (socket) => {
     io.emit("logout", id);
   });
 
-  socket.on("disconnect", (reason) => {
+  socket.on("disconnect", async (reason) => {
+    await usersModel.deleteUserSocket(idUser);
+    io.emit("logout", idUser);
     console.log(`Client disconnect from ${reason}`);
   });
 });
