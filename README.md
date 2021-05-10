@@ -41,6 +41,8 @@ The telegram application is created using how many dependencies, along with a li
 5. Create a new file named `.env`, add it's content from `.env.example`
 6. Run server `npm run dev'
 
-## Link:
+## VISIT PROJECT !!!
 
-- [Frontend](https://github.com/chaerulmarwan20/telegram-app)
+- :white_check_mark: [Frontend](https://github.com/chaerulmarwan20/telegram-app)
+- :rocket: [My Telegram](https://chatting-telegram.netlify.app/)
+
