@@ -76,7 +76,15 @@ The Telegram app is a chat application that allows users to send messages to oth
 5. Create a new file named `.env`, add it's content from `.env.example`
 6. Run server `npm run dev'
 
+<<<<<<< HEAD
 ## Related Project
 
 - :white_check_mark: [`Frontend Telegram`](https://github.com/chaerulmarwan20/telegram-app)
 - :rocket: [`Production`](https://chatting-telegram.netlify.app/)
+=======
+## VISIT PROJECT !!!
+
+- :white_check_mark: [Frontend](https://github.com/chaerulmarwan20/telegram-app)
+- :rocket: [My Telegram](https://chatting-telegram.netlify.app/)
+
+>>>>>>> 89e812379e274e8640ab479827083e07cecdfc76
