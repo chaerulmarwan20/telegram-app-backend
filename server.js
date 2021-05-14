@@ -65,17 +65,22 @@ io.on("connection", (socket) => {
       targetId: message.senderId,
       type: "receive",
     };
+    const senderName = await usersModel.getName(message.senderId);
     await usersModel.createMessage(sendInput);
     await usersModel.createMessage(targetInput);
     const getMessagesSender = await usersModel.findMessages(data.senderId);
     const getMessagesTarget = await usersModel.findMessages(data.receiverId);
     const result = [...getMessagesSender, ...getMessagesTarget];
-    io.to(`user:${data.receiverId}`).emit("recMessage", result);
-    callback(result);
+    io.to(`user:${data.receiverId}`).emit("recMessage", result, senderName);
+    callback(result, senderName);
   });
 
   socket.on("initialLogout", (id) => {
     io.emit("logout", id);
+  });
+
+  socket.on("delMessage", (idSender, idTarget) => {
+    io.emit("delete", idSender, idTarget);
   });
 
   socket.on("disconnect", async (reason) => {

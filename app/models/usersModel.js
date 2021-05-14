@@ -337,23 +337,33 @@ exports.updateUsers = (id, data) => {
           reject(new Error("Email has been registered"));
         } else {
           connection.query(
-            "UPDATE users SET ? WHERE id = ?",
-            [data, id],
+            `SELECT * FROM users WHERE NOT id = ? AND phoneNumber = ?`,
+            [id, data.phoneNumber],
             (err, result) => {
-              if (!err) {
+              if (result.length > 0) {
+                reject(new Error("Phone number is already in use"));
+              } else {
                 connection.query(
-                  "SELECT * FROM users WHERE id = ?",
-                  id,
+                  "UPDATE users SET ? WHERE id = ?",
+                  [data, id],
                   (err, result) => {
                     if (!err) {
-                      resolve(result);
+                      connection.query(
+                        "SELECT * FROM users WHERE id = ?",
+                        id,
+                        (err, result) => {
+                          if (!err) {
+                            resolve(result);
+                          } else {
+                            reject(new Error("Internal server error"));
+                          }
+                        }
+                      );
                     } else {
                       reject(new Error("Internal server error"));
                     }
                   }
                 );
-              } else {
-                reject(new Error("Internal server error"));
               }
             }
           );
@@ -478,6 +488,22 @@ exports.deleteUserSocket = (id) => {
   return new Promise((resolve, reject) => {
     connection.query(
       "DELETE FROM user_socket WHERE idUser = ?",
+      id,
+      (err, result) => {
+        if (!err) {
+          resolve(result);
+        } else {
+          reject(new Error("Internal server error"));
+        }
+      }
+    );
+  });
+};
+
+exports.getName = (id) => {
+  return new Promise((resolve, reject) => {
+    connection.query(
+      "SELECT name FROM users WHERE id = ?",
       id,
       (err, result) => {
         if (!err) {

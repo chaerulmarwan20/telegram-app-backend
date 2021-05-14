@@ -82,7 +82,7 @@ exports.findUser = (req, res) => {
 exports.create = async (req, res) => {
   let image;
   if (!req.file) {
-    image = "images\\avatar.png";
+    image = "images\\default.png";
   } else {
     image = req.file.path;
   }
@@ -373,7 +373,7 @@ exports.update = async (req, res) => {
         image = result[0].image;
       } else {
         const oldImage = result[0].image;
-        if (oldImage !== "images\\avatar.png") {
+        if (oldImage !== "images\\default.png") {
           removeImage(oldImage);
         }
         image = req.file.path;
@@ -385,7 +385,7 @@ exports.update = async (req, res) => {
       delete result[0].password;
       delete result[0].createdAt;
       delete result[0].updatedAt;
-      helper.printSuccess(res, 200, "Users has been updated", result);
+      helper.printSuccess(res, 200, "Your data has been updated", result);
     })
     .catch((err) => {
       if (err.message === "Internal server error") {
@@ -402,7 +402,7 @@ exports.delete = (req, res) => {
     .findUser(id, "delete")
     .then((result) => {
       const image = result[0].image;
-      if (image !== "images\\avatar.png") {
+      if (image !== "images\\default.png") {
         removeImage(image);
       }
       return usersModel.deleteUsers(id);
