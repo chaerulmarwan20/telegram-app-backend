@@ -23,6 +23,8 @@ The Telegram app is a chat application that allows users to send messages to oth
 
 - Realtime online/offline status using socket.io
 
+- Realtime notification using socket.io
+
 - JWT authentication
 
 - Nodemailer for email verification
