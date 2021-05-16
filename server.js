@@ -116,7 +116,7 @@ app.use((err, req, res, next) => {
   } else if (err.code === "LIMIT_FILE_SIZE") {
     res.status(400).send({
       status: false,
-      message: "File image too large",
+      message: "File image too large. Max 2MB.",
     });
   } else {
     res.status(404).send({
