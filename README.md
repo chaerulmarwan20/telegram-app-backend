@@ -43,6 +43,13 @@ The Telegram app is a chat application that allows users to send messages to oth
 - [Socket.io](https://socket.io/)
 - [Nodemailer](https://nodemailer.com/)
 - [Moment](https://momentjs.com/)
+- [Joi](https://www.npmjs.com/package/joi)
+- [Bcrypt](https://www.npmjs.com/package/bcrypt)
+- [Multer](https://www.npmjs.com/package/multer)
+- [Morgan](https://www.npmjs.com/package/morgan)
+- [Cors](https://www.npmjs.com/package/cors)
+- [Dotenv](https://www.npmjs.com/package/dotenv)
+- [Ip](https://www.npmjs.com/package/ip)
 
 ## Prerequisites
 
@@ -76,7 +83,7 @@ The Telegram app is a chat application that allows users to send messages to oth
 3. Go to directory `cd telegram-app-backend`
 4. Install all required packages `npm install`
 5. Create a new file named `.env`, add it's content from `.env.example`
-6. Run server `npm run dev'
+6. Run server `npm run dev` or `npm start`
 
 ## Related Project
 
