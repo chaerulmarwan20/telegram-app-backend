@@ -9,9 +9,10 @@
 - [Features](#features)
 - [Built With](#built-with)
 - [Prerequisites](#prerequisites)
-- [Endpoint](#endpoint)
 - [Installation](#installation)
-- [Related Project](#related-project)
+- [Documentation](#documentation)
+- [Link](#link)
+- [Author](#author)
 
 ## Introduction
 
@@ -24,6 +25,8 @@ The Telegram app is a chat application that allows users to send messages to oth
 - Realtime online/offline status using socket.io
 
 - Realtime notification using socket.io
+
+- Realtime deleting message using socket.io
 
 - JWT authentication
 
@@ -56,36 +59,66 @@ The Telegram app is a chat application that allows users to send messages to oth
 - [NodeJs](https://nodejs.org/en/download/)
 - [XAMPP](https://www.apachefriends.org/index.html)
 
-## Endpoint
-
-- User
-
-|  METHOD  |                          API                          |
-| :------: | :---------------------------------------------------: |
-|  `GET`   |                     /api/v1/users                     |
-|  `GET`   |                /api/v1/users/find-one                 |
-|  `GET`   |              /api/v1/users/find-user/:id              |
-|  `POST`  |                     /api/v1/users                     |
-|  `GET`   |               /api/v1/users/auth/verify               |
-|  `PUT`   |                   /api/v1/users/:id                   |
-|  `POST`  |               /api/v1/users/auth/login                |
-|  `POST`  |          /api/v1/users/auth/forgot-password           |
-|  `PUT`   |           /api/v1/users/auth/reset-password           |
-| `DELETE` |                   /api/v1/users/:id                   |
-|  `GET`   |     /api/v1/users/messages/:idSender/:idReceiver      |
-|  `GET`   | /api/v1/users/messages/:idSender/:idTarget/:idMessage |
-|  `GET`   |               /api/v1/users/socket/:id                |
-
 ## Installation
 
-1. Open your terminal or command prompt. Then, clone the repository `git clone https://github.com/chaerulmarwan20/telegram-app-backend.git`
-2. Create database named `telegram-app` and import `telegram-app.sql` from this repository
-3. Go to directory `cd telegram-app-backend`
-4. Install all required packages `npm install`
-5. Create a new file named `.env`, add it's content from `.env.example`
-6. Run server `npm run dev` or `npm start`
+1. Clone the repository
 
-## Related Project
+```
+git clone https://github.com/chaerulmarwan20/telegram-app-backend.git
+cd telegram-app-backend
+```
+
+2. Install package
+
+```
+npm install
+```
+
+3. Create a new database with a name `telegram-app` and import `telegram-app.sql` from this repository
+
+4. Create .env file
+
+```
+# Host & Port
+HOST=
+PORT=
+PORT_FRONTEND=
+
+# Database
+DB_HOST=
+DB_USER=
+DB_PASS=
+DB_NAME=telegram-app
+
+# Secret Key
+SECRET_KEY=
+
+# Email
+EMAIL_USER=
+EMAIL_PASS=
+```
+
+5. Run application
+
+```
+npm run dev
+```
+
+Or
+
+```
+npm start
+```
+
+## Documentation
+
+[![Run in Postman](https://run.pstmn.io/button.svg)](https://documenter.getpostman.com/view/11970262/TzXtJfmG)
+
+## Link
 
 - :white_check_mark: [`Frontend Telegram`](https://github.com/chaerulmarwan20/telegram-app)
-- :rocket: [`Production`](https://chatting-telegram.netlify.app/)
+- :rocket: [`Publication`](https://chatting-telegram.netlify.app/)
+
+## Author
+
+- [Chaerul Marwan](https://github.com/chaerulmarwan20)
