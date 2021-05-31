@@ -57,7 +57,7 @@ The Telegram app is a chat application that allows users to send messages to oth
 ## Prerequisites
 
 - [NodeJs](https://nodejs.org/en/download/)
-- [XAMPP](https://www.apachefriends.org/index.html)
+- [MySQL](https://www.mysql.com/)
 
 ## Installation
 
